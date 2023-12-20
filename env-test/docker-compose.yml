@@ -1,0 +1,43 @@
+version: "3"
+
+
+services:
+
+  glpi:
+    image: diouxx/glpi
+    container_name: glpi
+    volumes:
+      - glpi:/var/www/html/glpi
+    ports:
+      - 7080:80
+    networks:
+      lan_network:
+        ipv4_address: 192.168.56.6
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    hostname: mariadb
+    volumes:
+      - mariadb-supervision:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=glpi
+      - MARIADB_DATABASE=glpi
+      - MARIADB_USER=glpi
+      - MARIADB_PASSWORD=glpi
+    networks:
+      lan_network:
+        ipv4_address: 192.168.56.5
+
+volumes:
+  mariadb-supervision:
+  glpi:
+
+
+networks:
+  lan_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.56.0/24
+          gateway: 192.168.56.1
